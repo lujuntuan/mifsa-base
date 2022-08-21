@@ -52,7 +52,7 @@ public:
     const std::string& exeName() const;
     const std::string& typeName() const;
     const VariantMap& config() const;
-    Variant getArgValue(const Arg& arg) const;
+    Variant getArgValue(const Arg& arg, const std::string& configName = "") const;
     virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE);
     virtual int exec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) = 0;
     virtual void exit(int exitCode = 0) = 0;

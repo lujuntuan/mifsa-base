@@ -14,7 +14,6 @@
 #define MIFSA_BASE_ELAPSED_H
 
 #include "mifsa/base/define.h"
-#include <atomic>
 #include <stdint.h>
 
 MIFSA_NAMESPACE_BEGIN
@@ -38,7 +37,7 @@ private:
     uint64_t get_p(uint64_t nano_s = 0) const noexcept;
 
 private:
-    std::atomic<uint64_t> m_startTime { 0 };
+    uint64_t m_startTime = 0;
 };
 
 MIFSA_NAMESPACE_END

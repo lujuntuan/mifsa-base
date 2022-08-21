@@ -147,6 +147,22 @@ macro(mifsa_module_end)
                 ${CMAKE_INSTALL_LIBDIR}/cmake/${SUB_PROJECT_NAME}
                 )
         endif()
+        if(EXISTS ${PROJECT_SOURCE_DIR}/../src)
+            file(GLOB_RECURSE
+                MIFSA_COMMON_SOURCES
+                ${PROJECT_SOURCE_DIR}/../src/*.*
+                )
+            target_include_directories(
+                ${SUB_PROJECT_NAME}
+                PRIVATE
+                ${PROJECT_SOURCE_DIR}/../src
+                )
+            target_sources(
+                ${SUB_PROJECT_NAME}
+                PRIVATE
+                ${MIFSA_COMMON_SOURCES}
+                )
+        endif()
         target_link_libraries(
             ${SUB_PROJECT_NAME}
             PUBLIC
@@ -169,6 +185,7 @@ macro(mifsa_module_end)
             ${SUB_PROJECT_NAME}
             PRIVATE
             ${MIFSA_LIBRARY_DEF}
+            "-DMIFSA_CLIENT_TYPE"
             PUBLIC
             ${MIFSA_IDL_DEF}
             )
@@ -198,6 +215,22 @@ macro(mifsa_module_end)
             configure_file(
                 ${PROJECT_SOURCE_DIR}/../config.h.in
                 ${COMMON_INCLUDE_OUTPUT_PATH}/mifsa/${MIFSA_MODULE_TYPE}/config.h
+                )
+        endif()
+        if(EXISTS ${PROJECT_SOURCE_DIR}/../src)
+            file(GLOB_RECURSE
+                MIFSA_COMMON_SOURCES
+                ${PROJECT_SOURCE_DIR}/../src/*.*
+                )
+            target_include_directories(
+                ${SUB_PROJECT_NAME}
+                PRIVATE
+                ${PROJECT_SOURCE_DIR}/../src
+                )
+            target_sources(
+                ${SUB_PROJECT_NAME}
+                PRIVATE
+                ${MIFSA_COMMON_SOURCES}
                 )
         endif()
         target_link_libraries(
@@ -241,6 +274,7 @@ macro(mifsa_module_end)
             ${SUB_PROJECT_NAME}
             PRIVATE
             ${MIFSA_LIBRARY_APPDEF}
+            "-DMIFSA_SERVER_TYPE"
             PUBLIC
             ${MIFSA_IDL_DEF}
             )
@@ -309,6 +343,7 @@ macro(mifsa_module_end)
             ${SUB_PROJECT_NAME}
             PRIVATE
             ${MIFSA_LIBRARY_DEF}
+            "-DMIFSA_PLATFORM_TYPE"
             )
     elseif(${SUB_MODULE_TYPE} MATCHES "idl")
         if(${MIFSA_IDL_TYPE} MATCHES "ros")
@@ -402,6 +437,11 @@ macro(mifsa_module_end)
                 PATTERN "*.cpp" EXCLUDE
                 )
         endif()
+        target_compile_definitions(
+            ${SUB_PROJECT_NAME}
+            PRIVATE
+            "-DMIFSA_IDL_TYPE"
+            )
     endif()
     ##
     if(EXISTS ${PROJECT_SOURCE_DIR}/src)

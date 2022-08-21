@@ -94,7 +94,7 @@ const VariantMap& Application::config() const
     return m_hpr->config;
 }
 
-Variant Application::getArgValue(const Arg& arg) const
+Variant Application::getArgValue(const Arg& arg, const std::string& configName) const
 {
     try {
         if (arg.defaultValue.type() == Variant::TYPE_BOOL) {
@@ -127,7 +127,11 @@ Variant Application::getArgValue(const Arg& arg) const
         }
         return arg.defaultValue;
     } catch (std::invalid_argument error) {
-        LOG_DEBUG(error.what());
+        if (!configName.empty()) {
+            if (m_hpr->config.contains(configName)) {
+                return m_hpr->config.value(configName);
+            }
+        }
         return arg.defaultValue;
     }
     return arg.defaultValue;

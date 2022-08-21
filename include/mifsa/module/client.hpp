@@ -14,17 +14,19 @@
 #define MIFSA_MODULE_CLIENT_H
 
 #include "mifsa/base/application.h"
+#include "mifsa/base/queue.h"
 #include "mifsa/base/semaphore.h"
 
 MIFSA_NAMESPACE_BEGIN
 
 template <class INTERFACE>
-class ClientProxy : public Application {
+class ClientProxy : public Application, public Queue {
     CLASS_DISSABLE_COPY_AND_ASSIGN(ClientProxy)
 
 public:
     explicit ClientProxy<INTERFACE>(int argc, char** argv, const std::string& module = "")
         : Application(argc, argv, "mifsa_" + module + "_client", false)
+        , Queue(0)
         , m_module(module)
     {
     }
@@ -40,20 +42,23 @@ public:
     {
         return m_module;
     }
-    virtual void asyncExec(int flag = CHECK_TERMINATE) override
+    virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
         parserFlag(flag);
+        asyncRun();
     }
-    virtual int exec(int flag = CHECK_TERMINATE) override
+    virtual int exec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
         parserFlag(flag);
-        m_semaphone.acquire();
-        return m_exitCode;
+        return run();
     }
     virtual void exit(int exitCode = 0) override
     {
-        m_exitCode = exitCode;
-        m_semaphone.reset();
+        this->destroyInterface();
+        quit(exitCode);
+    }
+    virtual void eventChanged(const std::shared_ptr<Event>& event) override
+    {
     }
 
 protected:
@@ -75,8 +80,6 @@ protected:
 private:
     std::unique_ptr<INTERFACE> m_interface;
     std::string m_module;
-    Semaphore m_semaphone;
-    int m_exitCode = 0;
 };
 
 MIFSA_NAMESPACE_END

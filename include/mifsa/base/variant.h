@@ -258,11 +258,11 @@ public:
     MIFSA_EXPORT friend std::ostream& operator<<(std::ostream& ostream, const VariantMap& data) noexcept;
 };
 
-#define VARIANT_DECLARE_TYPE(T)                                \
+#define VARIANT_DECLARE_TYPE(T, S)                             \
     namespace VariantDeclare {                                 \
-        struct T##Register {                                   \
+        struct S##Register {                                   \
             int type;                                          \
-            T##Register()                                      \
+            S##Register()                                      \
             {                                                  \
                 type = VariantValue::registerType(             \
                     typeid(T).hash_code(),                     \
@@ -277,7 +277,7 @@ public:
         template <>                                            \
         inline int getType<T>()                                \
         {                                                      \
-            static T##Register reg;                            \
+            static S##Register reg;                            \
             return reg.type;                                   \
         }                                                      \
     }
