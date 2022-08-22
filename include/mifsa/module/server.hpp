@@ -25,6 +25,10 @@ class ServerInterfaceBase {
 public:
     ServerInterfaceBase() = default;
     virtual ~ServerInterfaceBase() = default;
+
+private:
+    template <class INTERFACE>
+    friend class ServerProxy;
 };
 
 template <class INTERFACE>
@@ -32,9 +36,9 @@ class ServerProxy : public Application, public Queue {
     CLASS_DISSABLE_COPY_AND_ASSIGN(ServerProxy)
 
 public:
-    explicit ServerProxy<INTERFACE>(int argc, char** argv, const std::string& module = "")
+    explicit ServerProxy<INTERFACE>(int argc, char** argv, const std::string& module = "", int queueId = 0)
         : Application(argc, argv, "mifsa_" + module + "_server", true)
-        , Queue(0)
+        , Queue(queueId)
         , m_module(module)
     {
 #ifdef MIFSA_SUPPORT_SYSTEMD
@@ -50,6 +54,17 @@ public:
 #ifdef MIFSA_SUPPORT_SYSTEMD
         sd_notify(0, "STOPPING=1");
 #endif
+    }
+    inline const std::string& module()
+    {
+        return m_module;
+    }
+    inline const std::unique_ptr<INTERFACE>& interface() const
+    {
+        if (!m_interface) {
+            LOG_WARNING("instance is null");
+        }
+        return m_interface;
     }
     virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
@@ -70,17 +85,6 @@ public:
     }
 
 protected:
-    inline const std::string& module()
-    {
-        return m_module;
-    }
-    inline const std::unique_ptr<INTERFACE>& interface() const
-    {
-        if (!m_interface) {
-            LOG_WARNING("instance is null");
-        }
-        return m_interface;
-    }
     template <class INTERFACE_ADAPTER>
     void loadInterface()
     {

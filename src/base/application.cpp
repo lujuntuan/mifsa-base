@@ -11,7 +11,7 @@
  **********************************************************************************/
 
 #include "mifsa/base/application.h"
-#include "importlib/popl.hpp"
+#include "hpplib/popl.hpp"
 #include "mifsa/utils/dir.h"
 #include "mifsa/utils/host.h"
 #include "mifsa/utils/system.h"
@@ -146,9 +146,10 @@ VariantMap Application::readConfig(const std::string& fileName)
         LOG_WARNING("config data not exists");
         return data;
     }
-    data = Variant::readJson(configPath);
-    if (data.empty()) {
-        LOG_WARNING("read config data error");
+    std::string errorString;
+    data = Variant::readJson(configPath, &errorString);
+    if (data.empty() && !errorString.empty()) {
+        LOG_WARNING("read config data error:", errorString);
         return data;
     }
     return data;
@@ -160,6 +161,7 @@ void Application::parserFlag(int flag)
         if (!Utils::programCheckSingleton(m_hpr->typeName)) {
             LOG_WARNING("program is already running");
             std::exit(1);
+            return;
         }
     }
     if (flag & Application::CHECK_TERMINATE) {
@@ -195,10 +197,12 @@ void Application::parserArgs(const std::vector<Arg>& args)
         LOG_DEBUG("parameter input error: ", error.what());
         LOG_DEBUG(m_hpr->argParser);
         std::exit(0);
+        return;
     }
     if (helpOpt->is_set()) {
         LOG_DEBUG(m_hpr->argParser);
         std::exit(0);
+        return;
     }
 }
 

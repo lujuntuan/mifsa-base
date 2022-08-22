@@ -24,7 +24,7 @@ public:
     using CbConnected = std::function<void(bool connected)>;
     ClientInterfaceBase()
     {
-        _cbConnected = [this](bool connected) {
+        cbConnected = [this](bool connected) {
             if (m_hasDetectConnect && m_cbDetectConnected) {
                 m_cbDetectConnected(connected);
             }
@@ -35,6 +35,8 @@ public:
     };
     virtual ~ClientInterfaceBase() = default;
     virtual std::string version() = 0;
+
+private:
     virtual bool connected() = 0;
     virtual bool waitForConnected(int timeout_ms = -1)
     {
@@ -49,13 +51,13 @@ public:
         m_hasDetectConnect = true;
     }
 
-public:
-    CbConnected _cbConnected;
+protected:
+    CbConnected cbConnected;
 
 private:
+    template <class INTERFACE>
+    friend class ClientProxy;
     CbConnected m_cbDetectConnected;
-
-private:
     std::atomic_bool m_hasDetectConnect { false };
     Semaphore m_sema;
 };
@@ -65,13 +67,24 @@ class ClientProxy : public Application, protected Queue {
     CLASS_DISSABLE_COPY_AND_ASSIGN(ClientProxy)
 
 public:
-    explicit ClientProxy<INTERFACE>(int argc, char** argv, const std::string& module = "")
+    explicit ClientProxy<INTERFACE>(int argc, char** argv, const std::string& module = "", int queueId = 0)
         : Application(argc, argv, "mifsa_" + module + "_client", false)
-        , Queue(0)
+        , Queue(queueId)
         , m_module(module)
     {
     }
     virtual ~ClientProxy<INTERFACE>() = default;
+    inline const std::string& module()
+    {
+        return m_module;
+    }
+    inline const std::unique_ptr<INTERFACE>& interface() const
+    {
+        if (!m_interface) {
+            LOG_WARNING("instance is null");
+        }
+        return m_interface;
+    }
     virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
         parserFlag(flag);
@@ -112,17 +125,6 @@ public:
     }
 
 protected:
-    inline const std::string& module()
-    {
-        return m_module;
-    }
-    inline const std::unique_ptr<INTERFACE>& interface() const
-    {
-        if (!m_interface) {
-            LOG_WARNING("instance is null");
-        }
-        return m_interface;
-    }
     template <class INTERFACE_ADAPTER>
     void loadInterface()
     {

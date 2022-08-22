@@ -29,7 +29,7 @@ file(GLOB_RECURSE
     ${PROJECT_SOURCE_DIR}/include/*.*
     ${PROJECT_SOURCE_DIR}/src/utils/*.*
     ${PROJECT_SOURCE_DIR}/src/base/*.*
-    ${PROJECT_SOURCE_DIR}/src/importlib/*.*
+    ${PROJECT_SOURCE_DIR}/src/hpplib/*.*
     )
 add_library(
     ${PROJECT_NAME}

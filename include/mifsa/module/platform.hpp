@@ -87,6 +87,7 @@ public:
             versionMinor);
         if (!m_platform) {
             std::exit(-1);
+            return;
         }
     }
 

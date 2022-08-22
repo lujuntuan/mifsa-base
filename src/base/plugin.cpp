@@ -11,7 +11,7 @@
  **********************************************************************************/
 
 #include "mifsa/base/plugin.h"
-#include "importlib/dylib.hpp"
+#include "hpplib/dylib.hpp"
 #include "mifsa/base/log.h"
 #include "mifsa/utils/dir.h"
 #include <map>
