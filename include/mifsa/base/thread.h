@@ -43,8 +43,10 @@ public:
     static std::string currentThreadId();
 
 public:
+    bool isInSameThread() const;
     bool isRunning() const;
     bool isReadyFinished() const;
+    std::string threadId() const;
     void setReadyFinished(bool readFinished);
     void setBeginCb(const Callback& cb);
     void setEndCb(const Callback& cb);

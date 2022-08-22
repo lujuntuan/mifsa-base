@@ -19,8 +19,49 @@
 
 MIFSA_NAMESPACE_BEGIN
 
+class ClientInterfaceBase {
+public:
+    using CbConnected = std::function<void(bool connected)>;
+    ClientInterfaceBase()
+    {
+        _cbConnected = [this](bool connected) {
+            if (m_hasDetectConnect && m_cbDetectConnected) {
+                m_cbDetectConnected(connected);
+            }
+            if (connected) {
+                m_sema.reset(0);
+            }
+        };
+    };
+    virtual ~ClientInterfaceBase() = default;
+    virtual std::string version() = 0;
+    virtual bool connected() = 0;
+    virtual bool waitForConnected(int timeout_ms = -1)
+    {
+        if (connected()) {
+            return true;
+        }
+        return m_sema.acquire(timeout_ms);
+    }
+    virtual void detectConnect(const CbConnected& cb)
+    {
+        m_cbDetectConnected = cb;
+        m_hasDetectConnect = true;
+    }
+
+public:
+    CbConnected _cbConnected;
+
+private:
+    CbConnected m_cbDetectConnected;
+
+private:
+    std::atomic_bool m_hasDetectConnect { false };
+    Semaphore m_sema;
+};
+
 template <class INTERFACE>
-class ClientProxy : public Application, public Queue {
+class ClientProxy : public Application, protected Queue {
     CLASS_DISSABLE_COPY_AND_ASSIGN(ClientProxy)
 
 public:
@@ -31,17 +72,6 @@ public:
     {
     }
     virtual ~ClientProxy<INTERFACE>() = default;
-    inline const std::unique_ptr<INTERFACE>& interface() const
-    {
-        if (!m_interface) {
-            LOG_WARNING("instance is null");
-        }
-        return m_interface;
-    }
-    inline const std::string& module()
-    {
-        return m_module;
-    }
     virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
         parserFlag(flag);
@@ -54,21 +84,52 @@ public:
     }
     virtual void exit(int exitCode = 0) override
     {
-        this->destroyInterface();
         quit(exitCode);
     }
     virtual void eventChanged(const std::shared_ptr<Event>& event) override
     {
     }
+    virtual bool connected()
+    {
+        if (!m_interface) {
+            return false;
+        }
+        return m_interface->connected();
+    }
+    virtual bool waitForConnected(int timeout_ms = -1)
+    {
+        if (!m_interface) {
+            return false;
+        }
+        return m_interface->connected();
+    }
+    virtual void detectConnect(const ClientInterfaceBase::CbConnected& cb)
+    {
+        if (!m_interface) {
+            return;
+        }
+        return m_interface->detectConnect(cb);
+    }
 
 protected:
-    template <class TARGET>
+    inline const std::string& module()
+    {
+        return m_module;
+    }
+    inline const std::unique_ptr<INTERFACE>& interface() const
+    {
+        if (!m_interface) {
+            LOG_WARNING("instance is null");
+        }
+        return m_interface;
+    }
+    template <class INTERFACE_ADAPTER>
     void loadInterface()
     {
         if (m_interface) {
             LOG_WARNING("instance has set");
         }
-        m_interface = std::make_unique<TARGET>();
+        m_interface = std::make_unique<INTERFACE_ADAPTER>();
     }
     void destroyInterface()
     {

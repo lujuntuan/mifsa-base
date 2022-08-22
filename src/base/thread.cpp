@@ -99,6 +99,14 @@ std::string Thread::currentThreadId()
     return ss.str();
 }
 
+bool Thread::isInSameThread() const
+{
+    if (std::this_thread::get_id() == m_hpr->thread->get_id()) {
+        return true;
+    }
+    return false;
+}
+
 bool Thread::isRunning() const
 {
     return m_hpr->isRunning;
@@ -107,6 +115,13 @@ bool Thread::isRunning() const
 bool Thread::isReadyFinished() const
 {
     return m_hpr->isReadyFinished;
+}
+
+std::string Thread::threadId() const
+{
+    std::stringstream ss;
+    ss << m_hpr->thread->get_id();
+    return ss.str();
 }
 
 void Thread::setReadyFinished(bool readFinished)

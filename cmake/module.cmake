@@ -307,31 +307,31 @@ macro(mifsa_module_end)
             ${SUB_PROJECT_NAME}
             RUNTIME
             DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/mifsa
+            ${CMAKE_INSTALL_LIBDIR}/mifsa-plugins
             ARCHIVE
             DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/mifsa
+            ${CMAKE_INSTALL_LIBDIR}/mifsa-plugins
             LIBRARY
             DESTINATION
-            ${CMAKE_INSTALL_LIBDIR}/mifsa
+            ${CMAKE_INSTALL_LIBDIR}/mifsa-plugins
             )
         set_target_properties(
             ${SUB_PROJECT_NAME}
             PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mifsa
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mifsa-plugins
         )
         set_target_properties(
             ${SUB_PROJECT_NAME}
             PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY
-            ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/mifsa
+            ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/mifsa-plugins
         )
         set_target_properties(
             ${SUB_PROJECT_NAME}
             PROPERTIES
             LIBRARY_OUTPUT_DIRECTORY
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/mifsa
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/mifsa-plugins
         )
         set_target_properties(
             ${SUB_PROJECT_NAME}

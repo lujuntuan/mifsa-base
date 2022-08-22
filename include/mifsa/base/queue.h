@@ -34,6 +34,8 @@ public:
     bool isReadyToQuit() const;
     bool isBusy() const;
     bool isRunAsync() const;
+    bool isInSameThread() const;
+    std::string threadId() const;
     int quitCode() const;
     int eventCount() const;
     std::shared_ptr<Timer> createTimer(uint32_t interval_milli_s, bool loop = false, const Timer::Callback& cb = nullptr);
@@ -54,7 +56,7 @@ private:
     void addTimer(const std::shared_ptr<Timer>& timer);
     void removeTimer(const std::shared_ptr<Timer>& timer);
     void removeTimer(Timer* timer);
-    void wakeUpEvent();
+    void wakeUp();
     void processNextSleepTime();
 
 private:

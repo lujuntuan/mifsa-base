@@ -21,12 +21,18 @@
 
 MIFSA_NAMESPACE_BEGIN
 
-template <class PROVIDER>
+class ServerInterfaceBase {
+public:
+    ServerInterfaceBase() = default;
+    virtual ~ServerInterfaceBase() = default;
+};
+
+template <class INTERFACE>
 class ServerProxy : public Application, public Queue {
     CLASS_DISSABLE_COPY_AND_ASSIGN(ServerProxy)
 
 public:
-    explicit ServerProxy<PROVIDER>(int argc, char** argv, const std::string& module = "")
+    explicit ServerProxy<INTERFACE>(int argc, char** argv, const std::string& module = "")
         : Application(argc, argv, "mifsa_" + module + "_server", true)
         , Queue(0)
         , m_module(module)
@@ -39,22 +45,11 @@ public:
         systemdTimer->start();
 #endif
     }
-    virtual ~ServerProxy<PROVIDER>()
+    virtual ~ServerProxy<INTERFACE>()
     {
 #ifdef MIFSA_SUPPORT_SYSTEMD
         sd_notify(0, "STOPPING=1");
 #endif
-    }
-    inline const std::unique_ptr<PROVIDER>& provider() const
-    {
-        if (!m_provider) {
-            LOG_WARNING("instance is null");
-        }
-        return m_provider;
-    }
-    inline const std::string& module()
-    {
-        return m_module;
     }
     virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
     {
@@ -68,7 +63,6 @@ public:
     }
     virtual void exit(int exitCode = 0) override
     {
-        this->destroyProvider();
         quit(exitCode);
     }
     virtual void eventChanged(const std::shared_ptr<Event>& event) override
@@ -76,23 +70,34 @@ public:
     }
 
 protected:
-    template <class TARGET>
-    void loadProvider()
+    inline const std::string& module()
     {
-        if (m_provider) {
+        return m_module;
+    }
+    inline const std::unique_ptr<INTERFACE>& interface() const
+    {
+        if (!m_interface) {
+            LOG_WARNING("instance is null");
+        }
+        return m_interface;
+    }
+    template <class INTERFACE_ADAPTER>
+    void loadInterface()
+    {
+        if (m_interface) {
             LOG_WARNING("instance has set");
         }
-        m_provider = std::make_unique<TARGET>();
+        m_interface = std::make_unique<INTERFACE_ADAPTER>();
     }
-    void destroyProvider()
+    void destroyInterface()
     {
-        if (m_provider) {
-            m_provider.reset();
+        if (m_interface) {
+            m_interface.reset();
         }
     }
 
 private:
-    std::unique_ptr<PROVIDER> m_provider;
+    std::unique_ptr<INTERFACE> m_interface;
     std::string m_module;
 };
 

@@ -16,8 +16,8 @@
 #include "mifsa/base/define.h"
 #include "mifsa/base/log.h"
 #include "mifsa/base/plugin.h"
-#include <stdlib.h>
 #include <mifsa/utils/host.h>
+#include <stdlib.h>
 
 MIFSA_NAMESPACE_BEGIN
 
@@ -26,14 +26,14 @@ MIFSA_NAMESPACE_BEGIN
 #define MIFSA_PLATFORM_VERSION_MINOR 0
 
 #define MIFSA_PLATFORM_ENV_NAME "MIFSA_PLATFORM_PATH"
-#define MIFSA_PLATFORM_DIR_NAME "mifsa"
+#define MIFSA_PLATFORM_DIR_NAME "mifsa-plugins"
 #define MIFSA_PLATFORM_PREFIX_NAME "mifsa_"
 #define MIFSA_PLATFORM_MID_NAME "_platform_"
 
-class PlatformBase {
+class PlatformInterfaceBase {
 public:
-    PlatformBase() = default;
-    virtual ~PlatformBase() = default;
+    PlatformInterfaceBase() = default;
+    virtual ~PlatformInterfaceBase() = default;
     template <class IMPLEMENTATION, int RV_MAJOR = MIFSA_PLATFORM_VERSION_MAJOR, int RV_MINOR = MIFSA_PLATFORM_VERSION_MINOR>
     static Plugin::Handle createPlatform(const char* pluginId, uint16_t versionMajor, uint16_t versionMinor)
     {
@@ -52,16 +52,16 @@ public:
     }
 };
 
-template <class PLATFORM>
+template <class INTERFACE>
 class PlatformProxy {
 public:
-    PlatformProxy<PLATFORM>() = default;
-    ~PlatformProxy<PLATFORM>()
+    PlatformProxy<INTERFACE>() = default;
+    ~PlatformProxy<INTERFACE>()
     {
         m_platform = nullptr;
         m_plugin.clear();
     }
-    inline const std::shared_ptr<PLATFORM>& platform(bool showWarn = true) const
+    inline const std::shared_ptr<INTERFACE>& platform(bool showWarn = true) const
     {
         if (showWarn && !m_platform) {
             LOG_WARNING("instance is null");
@@ -78,7 +78,7 @@ public:
         if (path) {
             seartPath.emplace_front(path);
         }
-        m_platform = m_plugin.load<PLATFORM>(
+        m_platform = m_plugin.load<INTERFACE>(
             MIFSA_PLATFORM_PREFIX_NAME + libName + MIFSA_PLATFORM_MID_NAME + platformName,
             std::move(seartPath),
             MIFSA_PLATFORM_DIR_NAME,
@@ -92,14 +92,14 @@ public:
 
 private:
     Plugin m_plugin;
-    std::shared_ptr<PLATFORM> m_platform;
+    std::shared_ptr<INTERFACE> m_platform;
 };
 
 #define MIFSA_CREATE_PLATFORM(...)                                                                                               \
     C_INTERFACE_BEGIN                                                                                                            \
     MIFSA_EXPORT Plugin::Handle MIFSA_PLATFORM_FUNCTION_NAME(const char* pluginId, uint16_t versionMajor, uint16_t versionMinor) \
     {                                                                                                                            \
-        return PlatformBase::createPlatform<__VA_ARGS__>(pluginId, versionMajor, versionMinor);                                  \
+        return PlatformInterfaceBase::createPlatform<__VA_ARGS__>(pluginId, versionMajor, versionMinor);                         \
     }                                                                                                                            \
     C_INTERFACE_END
 

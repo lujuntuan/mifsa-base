@@ -19,6 +19,7 @@
 #include <list>
 #include <queue>
 #include <shared_mutex>
+#include <sstream>
 #include <thread>
 
 #define QUEUE_MAX_NUM 4096
@@ -179,6 +180,21 @@ bool Queue::isRunAsync() const
     return false;
 }
 
+bool Queue::isInSameThread() const
+{
+    if (m_hpr->workThreadId == std::this_thread::get_id()) {
+        return true;
+    }
+    return false;
+}
+
+std::string Queue::threadId() const
+{
+    std::stringstream ss;
+    ss << m_hpr->workThreadId;
+    return ss.str();
+}
+
 int Queue::quitCode() const
 {
     return m_hpr->quitCode;
@@ -333,7 +349,7 @@ void Queue::removeTimer(Timer* timer)
     m_hpr->eventMutex.unlock();
 }
 
-void Queue::wakeUpEvent()
+void Queue::wakeUp()
 {
     m_hpr->eventSemaphore.reset();
 }
