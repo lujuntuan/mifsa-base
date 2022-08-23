@@ -60,7 +60,7 @@ void Timer::start(const Callback& cb) noexcept
     m_loopCount = 0;
 #endif
     if (m_queue) {
-        m_queue->wakeUp();
+        m_queue->wakeUpQueue();
     }
 }
 

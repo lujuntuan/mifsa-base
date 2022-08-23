@@ -21,14 +21,22 @@ MIFSA_NAMESPACE_BEGIN
 template <typename T>
 class SingletonProxy {
 public:
-    static T* getInstance(bool showWarn = true)
+    static T* getInstance(bool check = true)
     {
-        if (showWarn && !m_instance) {
-            LOG_WARNING("instance is null");
+        if (check && !m_instance) {
+            LOG_CRITICAL("instance is null");
         }
         return m_instance;
     }
     static void setInstance(T* instance)
+    {
+        if (instance && m_instance) {
+            LOG_CRITICAL("instance has set");
+            return;
+        }
+        m_instance = instance;
+    }
+    static void setInstanceForce(T* instance)
     {
         m_instance = instance;
     }

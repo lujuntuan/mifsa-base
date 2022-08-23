@@ -37,6 +37,8 @@ public:
     virtual std::string version() = 0;
 
 private:
+    virtual void onStarted() = 0;
+    virtual void onStoped() = 0;
     virtual bool connected() = 0;
     virtual bool waitForConnected(int timeout_ms = -1)
     {
@@ -53,6 +55,7 @@ private:
 
 protected:
     CbConnected cbConnected;
+    std::mutex mutex;
 
 private:
     template <class INTERFACE>
@@ -85,12 +88,12 @@ public:
         }
         return m_interface;
     }
-    virtual void asyncExec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
+    virtual void asyncExec(int flag = CHECK_TERMINATE) override
     {
         parserFlag(flag);
         asyncRun();
     }
-    virtual int exec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
+    virtual int exec(int flag = CHECK_TERMINATE) override
     {
         parserFlag(flag);
         return run();
@@ -98,6 +101,18 @@ public:
     virtual void exit(int exitCode = 0) override
     {
         quit(exitCode);
+    }
+    virtual void begin() override
+    {
+        if (m_interface) {
+            m_interface->onStarted();
+        }
+    }
+    virtual void end() override
+    {
+        if (m_interface) {
+            m_interface->onStoped();
+        }
     }
     virtual void eventChanged(const std::shared_ptr<Event>& event) override
     {
@@ -139,6 +154,13 @@ protected:
             m_interface.reset();
         }
     }
+    std::mutex& interfaceMutex()
+    {
+        if (!m_interface) {
+            throw std::runtime_error("interface is null");
+        }
+        return m_interface->mutex;
+    };
 
 private:
     std::unique_ptr<INTERFACE> m_interface;

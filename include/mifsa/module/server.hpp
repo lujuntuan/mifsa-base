@@ -15,6 +15,7 @@
 
 #include "mifsa/base/application.h"
 #include "mifsa/base/queue.h"
+#include <stdexcept>
 #ifdef MIFSA_SUPPORT_SYSTEMD
 #include <systemd/sd-daemon.h>
 #endif
@@ -27,8 +28,13 @@ public:
     virtual ~ServerInterfaceBase() = default;
 
 private:
+    virtual void onStarted() = 0;
+    virtual void onStoped() = 0;
+
+private:
     template <class INTERFACE>
     friend class ServerProxy;
+    std::mutex mutex;
 };
 
 template <class INTERFACE>
@@ -80,6 +86,18 @@ public:
     {
         quit(exitCode);
     }
+    virtual void begin() override
+    {
+        if (m_interface) {
+            m_interface->onStarted();
+        }
+    }
+    virtual void end() override
+    {
+        if (m_interface) {
+            m_interface->onStoped();
+        }
+    }
     virtual void eventChanged(const std::shared_ptr<Event>& event) override
     {
     }
@@ -99,6 +117,13 @@ protected:
             m_interface.reset();
         }
     }
+    std::mutex& interfaceMutex()
+    {
+        if (!m_interface) {
+            throw std::runtime_error("interface is null");
+        }
+        return m_interface->mutex;
+    };
 
 private:
     std::unique_ptr<INTERFACE> m_interface;

@@ -26,29 +26,38 @@ function(mifsa_get_git_commit _git_hash)
     set(${_git_hash} ${_commit_id} PARENT_SCOPE)
 endfunction()
 
-function(mifsa_install_etc _target)
-    if(NOT EXISTS ${PROJECT_SOURCE_DIR}/etc)
+function(mifsa_install_etc _target _dir)
+    if(NOT EXISTS ${_dir}/etc)
+        message(${_dir}/etc)
         return()
     endif()
-    add_custom_command(
-        TARGET
-        ${_target}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/etc/ ${COMMON_ETC_OUTPUT_PATH}
-        )
+    if(TARGET ${_target})
+        add_custom_command(
+            TARGET
+            ${_target}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_dir}/etc/ ${COMMON_ETC_OUTPUT_PATH}
+            )
+    else()
+        add_custom_target(
+            ${_target}
+            ALL
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_dir}/etc/ ${COMMON_ETC_OUTPUT_PATH}
+            )
+    endif()
     get_filename_component(_PREFIX_RELATIVE_PATH ${CMAKE_INSTALL_PREFIX} REALPATH)
     if(${_PREFIX_RELATIVE_PATH} MATCHES "^/usr")
         #use root
         install(
             DIRECTORY
-            ${PROJECT_SOURCE_DIR}/etc/
+            ${_dir}/etc/
             DESTINATION
             /etc
             )
     else()
         install(
             DIRECTORY
-            ${PROJECT_SOURCE_DIR}/etc/
+            ${_dir}/etc/
             DESTINATION
             etc
             )
@@ -56,19 +65,27 @@ function(mifsa_install_etc _target)
     unset(_PREFIX_RELATIVE_PATH)
 endfunction()
 
-function(mifsa_install_share _target)
-    if(NOT EXISTS ${PROJECT_SOURCE_DIR}/share)
+function(mifsa_install_share _target _dir)
+    if(NOT EXISTS ${_dir}/share)
         return()
     endif()
-    add_custom_command(
-        TARGET
-        ${_target}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/share/ ${COMMON_SHARE_OUTPUT_PATH}
-        )
+    if(TARGET ${_target})
+        add_custom_command(
+            TARGET
+            ${_target}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_dir}/share/ ${COMMON_SHARE_OUTPUT_PATH}
+            )
+    else()
+        add_custom_target(
+            ${_target}
+            ALL
+            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_dir}/share/ ${COMMON_SHARE_OUTPUT_PATH}
+            )
+    endif()
     install(
         DIRECTORY
-        ${PROJECT_SOURCE_DIR}/share/
+        ${_dir}/share/
         DESTINATION
         share/${CMAKE_PROJECT_NAME}
         )

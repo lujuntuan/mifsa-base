@@ -30,6 +30,8 @@ public:
     void asyncRun();
     void quit(int quitCode = 0);
     void waitforQuit(uint32_t milli_s = 100);
+    void wait(uint32_t milli_s);
+    void wakeUpWait();
     bool isRunning() const;
     bool isReadyToQuit() const;
     bool isBusy() const;
@@ -56,7 +58,7 @@ private:
     void addTimer(const std::shared_ptr<Timer>& timer);
     void removeTimer(const std::shared_ptr<Timer>& timer);
     void removeTimer(Timer* timer);
-    void wakeUp();
+    void wakeUpQueue();
     void processNextSleepTime();
 
 private:

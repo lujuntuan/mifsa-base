@@ -50,6 +50,7 @@ struct QueueHelper {
     std::mutex eventMutex;
     std::thread::id workThreadId;
     Semaphore eventSemaphore { 0 };
+    Semaphore waitSemaPhore { 0 };
     Semaphore quitSemaphore { 0 };
     std::unique_ptr<Thread> queueThread;
     TimeMethod timeMethod;
@@ -68,6 +69,7 @@ Queue::Queue(int queueId)
 Queue::~Queue()
 {
     m_hpr->eventSemaphore.reset();
+    m_hpr->waitSemaPhore.reset();
     m_hpr->quitSemaphore.reset();
     //
     m_hpr->eventMutex.lock();
@@ -132,6 +134,7 @@ void Queue::quit(int quitCode)
     m_hpr->quitFlag = true;
     m_hpr->quitCode = quitCode;
     m_hpr->eventSemaphore.reset();
+    m_hpr->waitSemaPhore.reset();
     if (m_hpr->queueThread) {
         m_hpr->queueThread->stop();
     }
@@ -155,6 +158,16 @@ void Queue::waitforQuit(uint32_t milli_s)
             }
         }
     }
+}
+
+void Queue::wait(uint32_t milli_s)
+{
+    m_hpr->waitSemaPhore.acquire(milli_s);
+}
+
+void Queue::wakeUpWait()
+{
+    m_hpr->waitSemaPhore.reset();
 }
 
 bool Queue::isRunning() const
@@ -349,7 +362,7 @@ void Queue::removeTimer(Timer* timer)
     m_hpr->eventMutex.unlock();
 }
 
-void Queue::wakeUp()
+void Queue::wakeUpQueue()
 {
     m_hpr->eventSemaphore.reset();
 }
