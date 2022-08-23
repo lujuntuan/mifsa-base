@@ -10,7 +10,7 @@
 #  *History:
 #**********************************************************************************
 
-find_path(3RDPARTY_DIR
+find_path(MIFSA_3RDPARTY_DIR
     NAMES
     lib
     PATHS
@@ -27,26 +27,26 @@ find_path(3RDPARTY_DIR
     NO_DEFAULT_PATH
     )
 
-if(3RDPARTY_DIR)
-    set(3RDPARTY_DIR_ENABLE ON)
+if(MIFSA_3RDPARTY_DIR)
+    set(MIFSA_3RDPARTY_DIR_ENABLE ON)
     message(STATUS "3rdparty_dir found")
-    message(STATUS "3RDPARTY_DIR=${3RDPARTY_DIR}")
+    message(STATUS "MIFSA_3RDPARTY_DIR=${MIFSA_3RDPARTY_DIR}")
 else()
-    set(3RDPARTY_DIR_ENABLE OFF)
+    set(MIFSA_3RDPARTY_DIR_ENABLE OFF)
     message(STATUS "3rdparty_dir not found")
 endif()
 macro(search_3rdparty_begin arg)
-    set(3RD_INC_SEARCH_PATH
+    set(MIFSA_MIFSA_3RD_INC_SEARCH_PATH
         ${CMAKE_INSTALL_PREFIX}}/include
         ${CMAKE_INSTALL_PREFIX}/${arg}/include
         )
-    set(3RD_LIB_SEARCH_PATH
+    set(MIFSA_MIFSA_3RD_LIB_SEARCH_PATH
         ${CMAKE_INSTALL_PREFIX}}/lib
         ${CMAKE_INSTALL_PREFIX}/${arg}/lib
         ${CMAKE_INSTALL_PREFIX}}/lib/${CMAKE_BUILD_TYPE}
         ${CMAKE_INSTALL_PREFIX}/${arg}/lib/${CMAKE_BUILD_TYPE}
         )
-    set(3RD_EXE_SEARCH_PATH
+    set(MIFSA_MIFSA_3RD_EXE_SEARCH_PATH
         ${CMAKE_INSTALL_PREFIX}}/bin
         ${CMAKE_INSTALL_PREFIX}/${arg}/bin
         ${CMAKE_INSTALL_PREFIX}}/bin/${CMAKE_BUILD_TYPE}
@@ -54,50 +54,50 @@ macro(search_3rdparty_begin arg)
         )
     if(WIN32)
         list(APPEND
-            3RD_INC_SEARCH_PATH
+            MIFSA_MIFSA_3RD_INC_SEARCH_PATH
             $ENV{programfiles}/${arg}/include
             $ENV{programfiles\(x86\)}/${arg}/include
             )
         list(APPEND
-            3RD_LIB_SEARCH_PATH
+            MIFSA_MIFSA_3RD_LIB_SEARCH_PATH
             $ENV{programfiles}/${arg}/lib
             $ENV{programfiles\(x86\)}/${arg}/lib
             $ENV{programfiles}/${arg}/lib/${CMAKE_BUILD_TYPE}
             $ENV{programfiles\(x86\)}/${arg}/lib/${CMAKE_BUILD_TYPE}
             )
         list(APPEND
-            3RD_EXE_SEARCH_PATH
+            MIFSA_MIFSA_3RD_EXE_SEARCH_PATH
             $ENV{programfiles}/${arg}/bin
             $ENV{programfiles\(x86\)}/${arg}/bin
             $ENV{programfiles}/${arg}/bin/${CMAKE_BUILD_TYPE}
             $ENV{programfiles\(x86\)}/${arg}/bin/${CMAKE_BUILD_TYPE}
             )
     endif()
-    if(3RDPARTY_DIR_ENABLE)
+    if(MIFSA_3RDPARTY_DIR_ENABLE)
         list(APPEND
-            3RD_INC_SEARCH_PATH
-            ${3RDPARTY_DIR}/include
-            ${3RDPARTY_DIR}/${arg}/include
+            MIFSA_MIFSA_3RD_INC_SEARCH_PATH
+            ${MIFSA_3RDPARTY_DIR}/include
+            ${MIFSA_3RDPARTY_DIR}/${arg}/include
             )
         list(APPEND
-            3RD_LIB_SEARCH_PATH
-            ${3RDPARTY_DIR}/lib
-            ${3RDPARTY_DIR}/${arg}/lib
-            ${3RDPARTY_DIR}/lib/${CMAKE_BUILD_TYPE}
-            ${3RDPARTY_DIR}/${arg}/lib/${CMAKE_BUILD_TYPE}
+            MIFSA_MIFSA_3RD_LIB_SEARCH_PATH
+            ${MIFSA_3RDPARTY_DIR}/lib
+            ${MIFSA_3RDPARTY_DIR}/${arg}/lib
+            ${MIFSA_3RDPARTY_DIR}/lib/${CMAKE_BUILD_TYPE}
+            ${MIFSA_3RDPARTY_DIR}/${arg}/lib/${CMAKE_BUILD_TYPE}
             )
         list(APPEND
-            3RD_EXE_SEARCH_PATH
-            ${3RDPARTY_DIR}/bin
-            ${3RDPARTY_DIR}/${arg}/bin
-            ${3RDPARTY_DIR}/bin/${CMAKE_BUILD_TYPE}
-            ${3RDPARTY_DIR}/${arg}/bin/${CMAKE_BUILD_TYPE}
+            MIFSA_MIFSA_3RD_EXE_SEARCH_PATH
+            ${MIFSA_3RDPARTY_DIR}/bin
+            ${MIFSA_3RDPARTY_DIR}/${arg}/bin
+            ${MIFSA_3RDPARTY_DIR}/bin/${CMAKE_BUILD_TYPE}
+            ${MIFSA_3RDPARTY_DIR}/${arg}/bin/${CMAKE_BUILD_TYPE}
             )
     else()
     endif()
 endmacro(search_3rdparty_begin arg)
 macro(search_3rdparty_end)
-    unset(3RD_INC_SEARCH_PATH)
-    unset(3RD_LIB_SEARCH_PATH)
-    unset(3RD_EXE_SEARCH_PATH)
+    unset(MIFSA_MIFSA_3RD_INC_SEARCH_PATH)
+    unset(MIFSA_MIFSA_3RD_LIB_SEARCH_PATH)
+    unset(MIFSA_MIFSA_3RD_EXE_SEARCH_PATH)
 endmacro(search_3rdparty_end)

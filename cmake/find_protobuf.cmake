@@ -17,7 +17,7 @@ find_program(PROTOBUF_GENERATOR_EXE
     NAMES
     protoc
     PATHS
-    ${3RD_EXE_SEARCH_PATH}
+    ${MIFSA_3RD_EXE_SEARCH_PATH}
     ENV PATH
     NO_CMAKE_PATH
     )
@@ -25,14 +25,14 @@ find_path(PROTOBUF_INCLUDE_DIR
     NAMES
     google/protobuf/message.h
     PATHS
-    ${3RD_INC_SEARCH_PATH}
+    ${MIFSA_3RD_INC_SEARCH_PATH}
     )
 find_library(PROTOBUF_LIBRARY
     NAMES
     protobuf
     libprotobuf
     PATHS
-    ${3RD_LIB_SEARCH_PATH}
+    ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
 mark_as_advanced(PROTOBUF_GENERATOR_EXE PROTOBUF_INCLUDE_DIR PROTOBUF_LIBRARY)
 search_3rdparty_end()
@@ -54,7 +54,7 @@ if(PROTOBUF_USE_C)
         NAMES
         protoc-c
         PATHS
-        ${3RD_EXE_SEARCH_PATH}
+        ${MIFSA_3RD_EXE_SEARCH_PATH}
         ENV PATH
         NO_CMAKE_PATH
         )
@@ -62,14 +62,14 @@ if(PROTOBUF_USE_C)
         NAMES
         protobuf-c/protobuf-c.h
         PATHS
-        ${3RD_INC_SEARCH_PATH}
+        ${MIFSA_3RD_INC_SEARCH_PATH}
         )
     find_library(PROTOBUF_C_LIBRARY
         NAMES
         protobuf-c
         libprotobuf-c
         PATHS
-        ${3RD_LIB_SEARCH_PATH}
+        ${MIFSA_3RD_LIB_SEARCH_PATH}
         )
     search_3rdparty_end()
     mark_as_advanced(PROTOBUF_C_GENERATOR_EXE PROTOBUF_C_INCLUDE_DIR PROTOBUF_C_LIBRARY)

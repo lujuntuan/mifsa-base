@@ -21,7 +21,7 @@ find_path(SYSTEMD_INCLUDE_DIR
     systemd/sd-daemon.h
     PATHS
     ${PC_SYSTEMD_INCLUDE_DIRS}
-    ${3RD_INC_SEARCH_PATH}
+    ${MIFSA_3RD_INC_SEARCH_PATH}
     )
 
 find_library(SYSTEMD_LIBRARY
@@ -29,7 +29,7 @@ find_library(SYSTEMD_LIBRARY
     systemd
     PATHS
     ${PC_SYSTEMD_LIBRARY_DIRS}
-    ${3RD_LIB_SEARCH_PATH}
+    ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
 search_3rdparty_end()
 mark_as_advanced(SYSTEMD_INCLUDE_DIR SYSTEMD_LIBRARY)

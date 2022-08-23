@@ -90,6 +90,9 @@ bool Timer::loop() const noexcept
 void Timer::setInterval(uint32_t interval_milli_s) noexcept
 {
     m_interval = interval_milli_s;
+    if (active() && m_queue) {
+        m_queue->wakeUpQueue();
+    }
 }
 
 void Timer::setLoop(bool loop) noexcept

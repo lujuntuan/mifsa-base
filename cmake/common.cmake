@@ -28,7 +28,6 @@ endfunction()
 
 function(mifsa_install_etc _target _dir)
     if(NOT EXISTS ${_dir}/etc)
-        message(${_dir}/etc)
         return()
     endif()
     if(TARGET ${_target})

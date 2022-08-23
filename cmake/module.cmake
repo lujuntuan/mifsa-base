@@ -134,7 +134,9 @@ macro(mifsa_module_end)
                 ${CMAKE_INSTALL_INCLUDEDIR}/mifsa/${MIFSA_MODULE_TYPE}
                 )
         endif()
+        set(${SUB_PROJECT_NAME}_CMAKE_CONFIG_TYPE "config")
         if(EXISTS ${PROJECT_SOURCE_DIR}/../config.cmake.in)
+            set(${SUB_PROJECT_NAME}_CMAKE_CONFIG_TYPE "target")
             configure_file(
                 ${PROJECT_SOURCE_DIR}/../config.cmake.in
                 ${COMMON_CMAKE_OUTPUT_PATH}/${PROJECT_NAME}/${PROJECT_NAME}-config.cmake
@@ -193,7 +195,7 @@ macro(mifsa_module_end)
             TARGETS
             ${SUB_PROJECT_NAME}
             EXPORT
-            ${SUB_PROJECT_NAME}-config
+            ${SUB_PROJECT_NAME}-${SUB_PROJECT_NAME}_CMAKE_CONFIG_TYPE
             RUNTIME
             DESTINATION
             ${CMAKE_INSTALL_BINDIR}
@@ -206,7 +208,7 @@ macro(mifsa_module_end)
             )
         install(
             EXPORT
-            ${SUB_PROJECT_NAME}-config
+            ${SUB_PROJECT_NAME}-${SUB_PROJECT_NAME}_CMAKE_CONFIG_TYPE
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/cmake/${SUB_PROJECT_NAME}
         )

@@ -129,7 +129,7 @@ public:
         if (!m_interface) {
             return false;
         }
-        return m_interface->connected();
+        return m_interface->waitForConnected();
     }
     virtual void detectConnect(const ClientInterfaceBase::CbConnected& cb)
     {

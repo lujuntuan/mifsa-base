@@ -22,7 +22,7 @@ find_path(VSOMEIP_INCLUDE_DIR
     vsomeip/vsomeip.h
     vsomeip/vsomeip.hpp
     PATHS
-    ${3RD_INC_SEARCH_PATH}
+    ${MIFSA_3RD_INC_SEARCH_PATH}
     )
 find_library(VSOMEIP_LIBRARY
     NAMES
@@ -33,7 +33,7 @@ find_library(VSOMEIP_LIBRARY
     vsomeip3
     libvsomeip3
     PATHS
-    ${3RD_LIB_SEARCH_PATH}
+    ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
 mark_as_advanced(VSOMEIP_INCLUDE_DIR VSOMEIP_LIBRARY)
 search_3rdparty_end()

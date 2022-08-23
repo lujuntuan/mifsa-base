@@ -11,7 +11,7 @@
 #**********************************************************************************
 
 if(${MIFSA_IDL_TYPE} MATCHES "auto")
-    message("** Auto check idl")
+    set(MIFSA_IDL_DETECTED_STR " (For auto detected )")
     if(ROS_ENABLE)
         set(MIFSA_IDL_TYPE ros)
     elseif(VSOMEIP_ENABLE)
@@ -27,13 +27,13 @@ string(TOLOWER ${MIFSA_IDL_TYPE} MIFSA_IDL_TYPE)
 
 if(${MIFSA_IDL_TYPE} MATCHES "ros")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_ROS")
-    message("** Support ros idl")
+    message("** Use ros idl${MIFSA_IDL_DETECTED_STR}")
 elseif(${MIFSA_IDL_TYPE} MATCHES "vsomeip")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_VSOMEIP")
-    message("** Support vsomeip idl")
+    message("** Use vsomeip idl${MIFSA_IDL_DETECTED_STR}")
 elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_FDBUS")
-    message("** Support fdbus idl")
+    message("** Use fdbus idl${MIFSA_IDL_DETECTED_STR}")
     if(MSVC)
         foreach(var
                 CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
@@ -83,13 +83,13 @@ function(vsomeip_idl_add_library _target)
     endif()
     commonapi_core_generate_src(
         ${PROJECT_BINARY_DIR}/include
-        "v1/commonapi/mifsa/${MIFSA_MODULE_TYPE}/interfaces"
+        "v1/mifsa_${MIFSA_MODULE_TYPE}_idl/Common"
         COMMONAPI_CORE_IDL_SRC
         ${CMAKE_CURRENT_LIST_DIR}/*.fidl
         )
     commonapi_someip_generate_src(
         ${PROJECT_BINARY_DIR}/include
-        "v1/commonapi/mifsa/${MIFSA_MODULE_TYPE}/interfaces"
+        "v1/mifsa_${MIFSA_MODULE_TYPE}_idl/Common"
         COMMONAPI_SOMEIP_IDL_SRC
         ${CMAKE_CURRENT_LIST_DIR}/*.fdepl
         )

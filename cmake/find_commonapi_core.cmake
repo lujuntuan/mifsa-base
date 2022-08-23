@@ -20,7 +20,7 @@ if(CMAKE_HOST_WIN32)
         commonapi-core-generator-windwos-x86
         commonapi-core-generator-windwos-x86_64
         PATHS
-        ${3RD_EXE_SEARCH_PATH}
+        ${MIFSA_3RD_EXE_SEARCH_PATH}
         ENV PATH
         NO_CMAKE_PATH
         )
@@ -31,7 +31,7 @@ elseif(CMAKE_HOST_UNIX)
         commonapi-core-generator-linux-x86
         commonapi-core-generator-linux-x86_64
         PATHS
-        ${3RD_EXE_SEARCH_PATH}
+        ${MIFSA_3RD_EXE_SEARCH_PATH}
         ENV PATH
         NO_CMAKE_PATH
         )
@@ -41,7 +41,7 @@ find_path(COMMONAPI_CORE_INCLUDE_DIR
     CommonAPI/CommonAPI.h
     CommonAPI/CommonAPI.hpp
     PATHS
-    ${3RD_INC_SEARCH_PATH}
+    ${MIFSA_3RD_INC_SEARCH_PATH}
     PATH_SUFFIXES
     ""
     CommonAPI-3.2
@@ -51,7 +51,7 @@ find_library(COMMONAPI_CORE_LIBRARY
     CommonAPI
     libCommonAPI
     PATHS
-    ${3RD_LIB_SEARCH_PATH}
+    ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
 mark_as_advanced(COMMONAPI_CORE_GENERATOR_EXE COMMONAPI_CORE_INCLUDE_DIR COMMONAPI_CORE_LIBRARY)
 search_3rdparty_end()
