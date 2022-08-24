@@ -10,7 +10,7 @@
 #  *History:
 #**********************************************************************************
 
-if(${MIFSA_IDL_TYPE} MATCHES "auto")
+if(${MIFSA_IDL_TYPE} STREQUAL "auto")
     set(MIFSA_IDL_DETECTED_STR " (For auto detected )")
     if(ROS_ENABLE)
         set(MIFSA_IDL_TYPE ros)
@@ -19,19 +19,19 @@ if(${MIFSA_IDL_TYPE} MATCHES "auto")
     elseif(FDBUS_ENABLE)
         set(MIFSA_IDL_TYPE fdbus)
     else()
-        set(MIFSA_IDL_TYPE unknown)
+        set(MIFSA_IDL_TYPE custom)
     endif()
 endif()
 
 string(TOLOWER ${MIFSA_IDL_TYPE} MIFSA_IDL_TYPE)
 set(MIFSA_IDL_SUPPORT ON)
-if(${MIFSA_IDL_TYPE} MATCHES "ros")
+if(${MIFSA_IDL_TYPE} STREQUAL "ros")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_ROS")
     message("** Use ros idl${MIFSA_IDL_DETECTED_STR}")
-elseif(${MIFSA_IDL_TYPE} MATCHES "vsomeip")
+elseif(${MIFSA_IDL_TYPE} STREQUAL "vsomeip")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_VSOMEIP")
     message("** Use vsomeip idl${MIFSA_IDL_DETECTED_STR}")
-elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
+elseif(${MIFSA_IDL_TYPE} STREQUAL "fdbus")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_FDBUS")
     message("** Use fdbus idl${MIFSA_IDL_DETECTED_STR}")
     if(MSVC)
@@ -46,9 +46,11 @@ elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
             endif()
         endforeach()
     endif()
-else()
+elseif(${MIFSA_IDL_TYPE} STREQUAL "custom")
     set(MIFSA_IDL_SUPPORT OFF)
-    message(WARNING "No idl support!")
+    message(WARNING "Use custom idl${MIFSA_IDL_DETECTED_STR}")
+else()
+    message(FATAL_ERROR "Unknown idl")
 endif()
 
 function(ros_idl_add_library _target)
@@ -129,7 +131,7 @@ endfunction()
 
 function(link_idl_library _target)
     set(ROS_IDL_NAME mifsa_${MIFSA_MODULE_TYPE}_idl)
-    if(${MIFSA_IDL_TYPE} MATCHES "ros")
+    if(${MIFSA_IDL_TYPE} STREQUAL "ros")
         find_package(${ROS_IDL_NAME} QUIET)
         rosidl_get_typesupport_target(
             ROS_IDL_TYPE
@@ -142,13 +144,13 @@ function(link_idl_library _target)
             rclcpp::rclcpp
             ${ROS_IDL_TYPE}
         )
-    elseif(${MIFSA_IDL_TYPE} MATCHES "vsomeip")
+    elseif(${MIFSA_IDL_TYPE} STREQUAL "vsomeip")
         target_link_libraries(
             ${_target}
             PRIVATE
             ${ROS_IDL_NAME}
          )
-    elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
+    elseif(${MIFSA_IDL_TYPE} STREQUAL "fdbus")
         target_link_libraries(
             ${_target}
             PRIVATE
