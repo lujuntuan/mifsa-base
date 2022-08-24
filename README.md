@@ -69,7 +69,7 @@ cmake -B build \
 	-DCMAKE_INSTALL_PREFIX=build/install \
 	-DMIFSA_BUILD_EXAMPLES=ON \
 	-DMIFSA_BUILD_TESTS=OFF
-cmake --build build --target install
+cmake --build build --target install -j8
 ```
 
 ## How to use:

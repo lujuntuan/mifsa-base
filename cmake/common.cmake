@@ -86,7 +86,7 @@ function(mifsa_install_share _target _dir)
         DIRECTORY
         ${_dir}/share/
         DESTINATION
-        share/${CMAKE_PROJECT_NAME}
+        share/mifsa-${MIFSA_MODULE_TYPE}
         )
     unset(_PREFIX_RELATIVE_PATH)
 endfunction()
