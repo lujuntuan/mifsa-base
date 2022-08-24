@@ -13,21 +13,21 @@
 macro(mifsa_module_begin _type)
     string(TOLOWER ${_type} SUB_MODULE_TYPE)
     string(REGEX REPLACE ".*/(.*)" "\\1" SUB_MODULE_DIR_NAME ${CMAKE_CURRENT_LIST_DIR})
-    if(${SUB_MODULE_TYPE} MATCHES "base")
+    if(${SUB_MODULE_TYPE} STREQUAL "base")
         set(SUB_PROJECT_NAME "")
-    elseif(${SUB_MODULE_TYPE} MATCHES "server")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "server")
         set(SUB_PROJECT_NAME mifsa_${MIFSA_MODULE_TYPE}_${SUB_MODULE_TYPE})
-    elseif(${SUB_MODULE_TYPE} MATCHES "client")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "client")
         set(SUB_PROJECT_NAME mifsa_${MIFSA_MODULE_TYPE})
         if(NOT "${ARGV1}" STREQUAL "")
             set(SUB_PROJECT_NAME ${SUB_PROJECT_NAME}_${ARGV1})
         endif()
-    elseif(${SUB_MODULE_TYPE} MATCHES "idl")
-        if(NOT ${SUB_MODULE_DIR_NAME} MATCHES ${MIFSA_IDL_TYPE})
+    elseif(${SUB_MODULE_TYPE} STREQUAL "idl")
+        if(NOT ${SUB_MODULE_DIR_NAME} STREQUAL ${MIFSA_IDL_TYPE})
             return()
         endif()
         set(SUB_PROJECT_NAME mifsa_${MIFSA_MODULE_TYPE}_${SUB_MODULE_TYPE})
-    elseif(${SUB_MODULE_TYPE} MATCHES "platform")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "platform")
         set(SUB_PROJECT_NAME mifsa_${MIFSA_MODULE_TYPE}_${SUB_MODULE_TYPE}_${SUB_MODULE_DIR_NAME})
         if(NOT "${ARGV1}" STREQUAL "")
             set(SUB_PROJECT_NAME mifsa_${MIFSA_MODULE_TYPE}_${SUB_MODULE_TYPE}_${ARGV1})
@@ -47,7 +47,7 @@ macro(mifsa_module_begin _type)
 endmacro()
 
 macro(mifsa_module_end)
-    if(${SUB_MODULE_TYPE} MATCHES "base")
+    if(${SUB_MODULE_TYPE} STREQUAL "base")
         if(EXISTS ${PROJECT_SOURCE_DIR}/config.h.in)
             configure_file(
                 ${PROJECT_SOURCE_DIR}/config.h.in
@@ -113,7 +113,7 @@ macro(mifsa_module_end)
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/cmake/${SUB_PROJECT_NAME}
         )
-    elseif(${SUB_MODULE_TYPE} MATCHES "client")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "client")
         if(EXISTS ${PROJECT_SOURCE_DIR}/../include)
             install(
                 DIRECTORY
@@ -212,7 +212,7 @@ macro(mifsa_module_end)
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/cmake/${SUB_PROJECT_NAME}
         )
-    elseif(${SUB_MODULE_TYPE} MATCHES "server")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "server")
         if(EXISTS ${PROJECT_SOURCE_DIR}/../config.h.in)
             configure_file(
                 ${PROJECT_SOURCE_DIR}/../config.h.in
@@ -251,7 +251,7 @@ macro(mifsa_module_end)
                 PRIVATE
                 systemd
              )
-            if(${MIFSA_IDL_TYPE} MATCHES "fdbus")
+            if(${MIFSA_IDL_TYPE} STREQUAL "fdbus")
                 set(SUB_SYSTEMD_TARGET "fdbus_name_server.service")
             endif()
             configure_file(
@@ -293,7 +293,7 @@ macro(mifsa_module_end)
             DESTINATION
             ${CMAKE_INSTALL_LIBDIR}
             )
-    elseif(${SUB_MODULE_TYPE} MATCHES "platform")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "platform")
         target_link_libraries(
             ${SUB_PROJECT_NAME}
             PUBLIC
@@ -347,12 +347,12 @@ macro(mifsa_module_end)
             ${MIFSA_LIBRARY_DEF}
             "-DMIFSA_PLATFORM_TYPE"
             )
-    elseif(${SUB_MODULE_TYPE} MATCHES "idl")
+    elseif(${SUB_MODULE_TYPE} STREQUAL "idl")
         mifsa_install_etc(${SUB_PROJECT_NAME} ${PROJECT_SOURCE_DIR}/..)
         mifsa_install_share(${SUB_PROJECT_NAME} ${PROJECT_SOURCE_DIR}/..)
-        if(${MIFSA_IDL_TYPE} MATCHES "ros")
+        if(${MIFSA_IDL_TYPE} STREQUAL "ros")
             set(SUB_PROJECT_NAME ${MIFSA_ROS_IDL_TYPE})
-        elseif(${MIFSA_IDL_TYPE} MATCHES "vsomeip")
+        elseif(${MIFSA_IDL_TYPE} STREQUAL "vsomeip")
             target_link_libraries(
                 ${SUB_PROJECT_NAME}
                 PUBLIC
@@ -395,7 +395,7 @@ macro(mifsa_module_end)
                 PATTERN "*.cc" EXCLUDE
                 PATTERN "*.cpp" EXCLUDE
                 )
-        elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
+        elseif(${MIFSA_IDL_TYPE} STREQUAL "fdbus")
             target_link_libraries(
                 ${SUB_PROJECT_NAME}
                 PUBLIC
