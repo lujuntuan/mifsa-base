@@ -178,13 +178,13 @@ void Application::parserArgs(const std::vector<Arg>& args)
         if (arg._defaultValue.type() == Variant::TYPE_NULL) {
             m_hpr->argParser.add<popl::Switch>(arg._shortName, arg._longName, arg._description);
         } else if (arg._defaultValue.type() == Variant::TYPE_BOOL) {
-            m_hpr->argParser.add<popl::Implicit<bool>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toBool());
+            m_hpr->argParser.add<popl::Value<bool>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toBool());
         } else if (arg._defaultValue.type() == Variant::TYPE_INT) {
-            m_hpr->argParser.add<popl::Implicit<int>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toInt());
+            m_hpr->argParser.add<popl::Value<int>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toInt());
         } else if (arg._defaultValue.type() == Variant::TYPE_DOUBLE) {
-            m_hpr->argParser.add<popl::Implicit<double>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toDouble());
+            m_hpr->argParser.add<popl::Value<double>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toDouble());
         } else if (arg._defaultValue.type() == Variant::TYPE_STRING) {
-            m_hpr->argParser.add<popl::Implicit<std::string>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toString());
+            m_hpr->argParser.add<popl::Value<std::string>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toString());
         } else {
             LOG_WARNING("parser arg not support");
             continue;
@@ -194,12 +194,18 @@ void Application::parserArgs(const std::vector<Arg>& args)
         m_hpr->argParser.parse(argc(), argv());
     } catch (popl::invalid_option error) {
         LOG_WARNING("parameter input error: ", error.what());
-        LOG_WARNING(m_hpr->argParser);
+        LOG_DEBUG(m_hpr->argParser);
         std::exit(0);
         return;
     }
+    for (const auto& non_option_arg : m_hpr->argParser.non_option_args()) {
+        LOG_WARNING("non_option_args: ", non_option_arg);
+    }
+    for (const auto& unknown_option_args : m_hpr->argParser.unknown_options()) {
+        LOG_WARNING("unknown_option_args: ", unknown_option_args);
+    }
     if (helpOpt->is_set()) {
-        LOG_WARNING(m_hpr->argParser);
+        LOG_DEBUG(m_hpr->argParser);
         std::exit(0);
         return;
     }
