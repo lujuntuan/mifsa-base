@@ -35,6 +35,7 @@ find_library(VSOMEIP_LIBRARY
     PATHS
     ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
+mark_as_advanced(vsomeip_DIR vsomeip3_DIR)
 mark_as_advanced(VSOMEIP_INCLUDE_DIR VSOMEIP_LIBRARY)
 search_3rdparty_end()
 

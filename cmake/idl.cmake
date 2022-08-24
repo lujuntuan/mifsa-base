@@ -24,7 +24,7 @@ if(${MIFSA_IDL_TYPE} MATCHES "auto")
 endif()
 
 string(TOLOWER ${MIFSA_IDL_TYPE} MIFSA_IDL_TYPE)
-
+set(MIFSA_IDL_SUPPORT ON)
 if(${MIFSA_IDL_TYPE} MATCHES "ros")
     set(MIFSA_IDL_DEF "-DMIFSA_SUPPORT_ROS")
     message("** Use ros idl${MIFSA_IDL_DETECTED_STR}")
@@ -47,7 +47,8 @@ elseif(${MIFSA_IDL_TYPE} MATCHES "fdbus")
         endforeach()
     endif()
 else()
-    message(FATAL_ERROR "No idl support!")
+    set(MIFSA_IDL_SUPPORT OFF)
+    message(WARNING "No idl support!")
 endif()
 
 function(ros_idl_add_library _target)

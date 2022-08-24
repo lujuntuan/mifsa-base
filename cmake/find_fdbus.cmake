@@ -18,7 +18,7 @@ find_path(FDBUS_INCLUDE_DIR
     fdbus/fdbus.h
     common_base/fdbus.h
     PATHS
-    ${MIFSA_3RD_INC_SEARCH_PATH}
+    #${MIFSA_3RD_INC_SEARCH_PATH}
     PATH_SUFFIXES
     usr
     )
@@ -29,7 +29,7 @@ find_library(FDBUS_LIBRARY
     common_base
     libcommon_base
     PATHS
-    ${MIFSA_3RD_LIB_SEARCH_PATH}
+    #${MIFSA_3RD_LIB_SEARCH_PATH}
     PATH_SUFFIXES
     usr
     )

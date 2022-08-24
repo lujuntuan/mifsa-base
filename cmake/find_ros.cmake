@@ -13,6 +13,8 @@
 find_package(ament_cmake QUIET)
 find_package(rclcpp QUIET)
 
+mark_as_advanced(ament_cmake_DIR rclcpp_DIR)
+
 if(ament_cmake_FOUND AND rclcpp_FOUND)
     set(ROS_ENABLE ON)
     message(STATUS "rclcpp found")

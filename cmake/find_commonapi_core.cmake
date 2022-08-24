@@ -53,6 +53,7 @@ find_library(COMMONAPI_CORE_LIBRARY
     PATHS
     ${MIFSA_3RD_LIB_SEARCH_PATH}
     )
+mark_as_advanced(CommonAPI_DIR)
 mark_as_advanced(COMMONAPI_CORE_GENERATOR_EXE COMMONAPI_CORE_INCLUDE_DIR COMMONAPI_CORE_LIBRARY)
 search_3rdparty_end()
 

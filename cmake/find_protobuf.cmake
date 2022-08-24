@@ -11,6 +11,7 @@
 #**********************************************************************************
 
 option(PROTOBUF_USE_C "" OFF)
+mark_as_advanced(PROTOBUF_USE_C)
 
 search_3rdparty_begin(protobuf)
 find_program(PROTOBUF_GENERATOR_EXE

@@ -275,7 +275,7 @@ macro(mifsa_module_end)
         target_compile_definitions(
             ${SUB_PROJECT_NAME}
             PRIVATE
-            ${MIFSA_LIBRARY_APPDEF}
+            ${MIFSA_LIBRARY_DEF}
             "-DMIFSA_SERVER_TYPE"
             PUBLIC
             ${MIFSA_IDL_DEF}
