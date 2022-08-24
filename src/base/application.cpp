@@ -97,44 +97,43 @@ const VariantMap& Application::config() const
 Variant Application::getArgValue(const Arg& arg, const std::string& configName) const
 {
     try {
-        if (arg.defaultValue.type() == Variant::TYPE_BOOL) {
-            auto value = m_hpr->argParser.get_option<popl::Value<bool>>(arg.longName);
-            if (value) {
+        if (arg._defaultValue.type() == Variant::TYPE_NULL) {
+            auto value = m_hpr->argParser.get_option<popl::Switch>(arg._longName);
+            if (value && value->is_set()) {
                 return value->value();
             }
-        } else if (arg.defaultValue.type() == Variant::TYPE_INT) {
-            auto value = m_hpr->argParser.get_option<popl::Value<int>>(arg.longName);
-            if (value) {
+        } else if (arg._defaultValue.type() == Variant::TYPE_BOOL) {
+            auto value = m_hpr->argParser.get_option<popl::Value<bool>>(arg._longName);
+            if (value && value->is_set()) {
                 return value->value();
             }
-        } else if (arg.defaultValue.type() == Variant::TYPE_DOUBLE) {
-            auto value = m_hpr->argParser.get_option<popl::Value<double>>(arg.longName);
-            if (value) {
+        } else if (arg._defaultValue.type() == Variant::TYPE_INT) {
+            auto value = m_hpr->argParser.get_option<popl::Value<int>>(arg._longName);
+            if (value && value->is_set()) {
                 return value->value();
             }
-        } else if (arg.defaultValue.type() == Variant::TYPE_STRING) {
-            auto value = m_hpr->argParser.get_option<popl::Value<std::string>>(arg.longName);
-            if (value) {
+        } else if (arg._defaultValue.type() == Variant::TYPE_DOUBLE) {
+            auto value = m_hpr->argParser.get_option<popl::Value<double>>(arg._longName);
+            if (value && value->is_set()) {
                 return value->value();
             }
-        } else if (arg.defaultValue.type() == Variant::TYPE_NULL) {
-            auto value = m_hpr->argParser.get_option<popl::Switch>(arg.longName);
-            if (value) {
+        } else if (arg._defaultValue.type() == Variant::TYPE_STRING) {
+            auto value = m_hpr->argParser.get_option<popl::Value<std::string>>(arg._longName);
+            if (value && value->is_set()) {
                 return value->value();
             }
         } else {
-            LOG_DEBUG("get arg not support");
+            LOG_WARNING("get arg not support");
         }
-        return arg.defaultValue;
-    } catch (std::invalid_argument error) {
         if (!configName.empty()) {
             if (m_hpr->config.contains(configName)) {
                 return m_hpr->config.value(configName);
             }
         }
-        return arg.defaultValue;
+    } catch (std::invalid_argument error) {
+        return arg._defaultValue;
     }
-    return arg.defaultValue;
+    return arg._defaultValue;
 }
 
 VariantMap Application::readConfig(const std::string& fileName)
@@ -176,31 +175,31 @@ void Application::parserArgs(const std::vector<Arg>& args)
 {
     auto helpOpt = m_hpr->argParser.add<popl::Switch>("h", "help", "produce help message");
     for (const auto& arg : args) {
-        if (arg.defaultValue.type() == Variant::TYPE_BOOL) {
-            m_hpr->argParser.add<popl::Value<bool>>(arg.shortName, arg.longName, arg.description, arg.defaultValue.toBool());
-        } else if (arg.defaultValue.type() == Variant::TYPE_INT) {
-            m_hpr->argParser.add<popl::Value<int>>(arg.shortName, arg.longName, arg.description, arg.defaultValue.toInt());
-        } else if (arg.defaultValue.type() == Variant::TYPE_DOUBLE) {
-            m_hpr->argParser.add<popl::Value<double>>(arg.shortName, arg.longName, arg.description, arg.defaultValue.toDouble());
-        } else if (arg.defaultValue.type() == Variant::TYPE_STRING) {
-            m_hpr->argParser.add<popl::Value<std::string>>(arg.shortName, arg.longName, arg.description, arg.defaultValue.toString());
-        } else if (arg.defaultValue.type() == Variant::TYPE_NULL) {
-            m_hpr->argParser.add<popl::Switch>(arg.shortName, arg.longName, arg.description);
+        if (arg._defaultValue.type() == Variant::TYPE_NULL) {
+            m_hpr->argParser.add<popl::Switch>(arg._shortName, arg._longName, arg._description);
+        } else if (arg._defaultValue.type() == Variant::TYPE_BOOL) {
+            m_hpr->argParser.add<popl::Implicit<bool>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toBool());
+        } else if (arg._defaultValue.type() == Variant::TYPE_INT) {
+            m_hpr->argParser.add<popl::Implicit<int>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toInt());
+        } else if (arg._defaultValue.type() == Variant::TYPE_DOUBLE) {
+            m_hpr->argParser.add<popl::Implicit<double>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toDouble());
+        } else if (arg._defaultValue.type() == Variant::TYPE_STRING) {
+            m_hpr->argParser.add<popl::Implicit<std::string>>(arg._shortName, arg._longName, arg._description, arg._defaultValue.toString());
         } else {
-            LOG_DEBUG("parser arg not support");
+            LOG_WARNING("parser arg not support");
             continue;
         }
     }
     try {
         m_hpr->argParser.parse(argc(), argv());
     } catch (popl::invalid_option error) {
-        LOG_DEBUG("parameter input error: ", error.what());
-        LOG_DEBUG(m_hpr->argParser);
+        LOG_WARNING("parameter input error: ", error.what());
+        LOG_WARNING(m_hpr->argParser);
         std::exit(0);
         return;
     }
     if (helpOpt->is_set()) {
-        LOG_DEBUG(m_hpr->argParser);
+        LOG_WARNING(m_hpr->argParser);
         std::exit(0);
         return;
     }

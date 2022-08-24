@@ -26,17 +26,21 @@ class MIFSA_EXPORT Application {
     CLASS_DISSABLE_COPY_AND_ASSIGN(Application)
 public:
     struct Arg {
-        std::string shortName;
-        std::string longName;
-        std::string description;
-        Variant defaultValue;
-        explicit Arg(const std::string& _shortName, const std::string& _longName, const std::string& _description, const Variant& _defaultValue = nullptr)
-            : shortName(_shortName)
-            , longName(_longName)
-            , description(_description)
-            , defaultValue(_defaultValue)
+        Arg() = delete;
+        explicit Arg(const std::string& shortName, const std::string& longName, const std::string& description, const Variant& defaultValue = Variant())
+            : _shortName(shortName)
+            , _longName(longName)
+            , _description(description)
+            , _defaultValue(defaultValue)
         {
         }
+
+    private:
+        std::string _shortName;
+        std::string _longName;
+        std::string _description;
+        Variant _defaultValue;
+        friend class Application;
     };
     enum ApplicationFlag {
         CHECK_NONE = (1 << 1),
