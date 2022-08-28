@@ -2,6 +2,8 @@
 
 The base library in [mifsa](https://github.com/lujuntuan/mifsa).
 
+Detailed documentation is found in [introduction](doc/introduction-zh.md)(中文).
+
 ## Features:
 
 - Base:
@@ -61,6 +63,10 @@ Optional:
 - -DMIFSA_BUILD_TESTS :
 
   whether to compile the tests, default is on.
+  
+- -DMIFSA_DLT:
+
+  whether to use the dlt-deamon, default is on.
 
 Examples:
 
@@ -68,7 +74,8 @@ Examples:
 cmake -B build \
 	-DCMAKE_INSTALL_PREFIX=build/install \
 	-DMIFSA_BUILD_EXAMPLES=ON \
-	-DMIFSA_BUILD_TESTS=OFF
+	-DMIFSA_BUILD_TESTS=OFF \
+	-DMIFSA_DLT=OFF
 cmake --build build --target install -j8
 ```
 
@@ -86,52 +93,7 @@ target_link_libraries(
 ...
 ```
 
-In cpp code:
-
-```c++
-#include <mifsa/base/application.h>
-
-using namespace Mifsa;
-
-class DemoApplication : public Application, public Queue {
-public:
-    DemoApplication(int argc, char** argv)
-        : Application(argc, argv)
-        , Queue(0)
-    {
-    }
-    ~DemoApplication()
-    {
-    }
-    virtual int exec(int flag = CHECK_SINGLETON | CHECK_TERMINATE) override
-    {
-        this->parserFlag(flag);
-        return Queue::run();
-    }
-    virtual void exit(int exitCode = 0) override
-    {
-        Queue::quit(exitCode);
-    }
-    virtual void eventChanged(const std::shared_ptr<Event>& event) override
-    {
-        //TODO
-    }
-    virtual void begin() override
-    {
-        LOG_DEBUG("begin");
-    }
-    virtual void end() override
-    {
-        LOG_DEBUG("end");
-    }
-}
-
-int main(int argc, char* argv[])
-{
-    DemoApplication app(argc, argv);
-    return app.exec();
-}
-```
+Note: Please see the code in the [examples](examples) folder.
 
 ## Copyright:
 
