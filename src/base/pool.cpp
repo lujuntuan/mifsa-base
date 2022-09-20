@@ -36,7 +36,7 @@ Pool::Pool(uint32_t thread_count)
     MIFSA_HELPER_CREATE(m_hpr);
     for (uint32_t i = 0; i < thread_count; i++) {
         m_hpr->threads.emplace_back(std::thread([this]() {
-            while (!m_hpr->tasks.empty()) {
+            for(;;) {
                 Callback task;
                 {
                     std::unique_lock<std::mutex> lock(m_hpr->mutex);
