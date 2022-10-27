@@ -35,20 +35,28 @@ set(CLANG FALSE)
 set(QCC FALSE)
 set(INTEL FALSE)
 
+if(CMAKE_C_COMPILER_ID)
+    set(DEFAULT_COMPILER CMAKE_C_COMPILER)
+elseif(CMAKE_CXX_COMPILER_ID)
+    set(DEFAULT_COMPILER CMAKE_CXX_COMPILER)
+else()
+    set(DEFAULT_COMPILER CMAKE_CXX_COMPILER)
+endif()
+
 function(check_gun_x64 _gun_is_x64)
     if(CMAKE_HOST_WIN32)
         set(NULL_DEV "nul")
     else()
         set(NULL_DEV "/dev/null")
     endif()
-    execute_process(COMMAND ${CMAKE_C_COMPILER} -E -dM -
+    execute_process(COMMAND ${${DEFAULT_COMPILER}} -E -dM -
         INPUT_FILE ${NULL_DEV}
         OUTPUT_VARIABLE _OUTPUT
         RESULT_VARIABLE _REVAL
         TIMEOUT 3
         )
     if(NOT ${_REVAL} EQUAL 0)
-        message("COMMAND: ${CMAKE_C_COMPILER} -posix -E -dM - < ${NULL_DEV}")
+        message("COMMAND: ${${DEFAULT_COMPILER}} -posix -E -dM - < ${NULL_DEV}")
         message(WARNING "Can not check gcc arch")
     else()
         string(FIND ${_OUTPUT} "#define __x86_64" _FIND_STATUS)
@@ -103,7 +111,7 @@ else()
     message(WARNING "PL_ARCH=${PL_ARCH}")
 endif()
 
-string(TOLOWER ${CMAKE_CXX_COMPILER_ID} PL_COMPILER)
+string(TOLOWER ${${DEFAULT_COMPILER}_ID} PL_COMPILER)
 if (${PL_COMPILER} MATCHES "gnu")
     if(WIN32)
         set(MINGW TRUE)
